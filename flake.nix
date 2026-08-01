@@ -42,6 +42,7 @@
           agenix.nixosModules.default
           ./nixos/disk-config.nix
           ./nixos/configuration.nix
+          # 아래의 nixpkgs 라는 키워드는 output의 args로 들어온 nixpkgs와는 관련이 없는, nix에서 자체적으로 정한 키워드임.
           { nixpkgs.overlays = [ channelsOverlay ]; }
           # agenix CLI (시크릿 생성/편집: agenix -e)
           { environment.systemPackages = [ agenix.packages.${system}.default ]; }
