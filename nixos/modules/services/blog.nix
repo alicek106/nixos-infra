@@ -96,6 +96,9 @@ in
     (pkgs.writeShellScriptBin "blog-publish" ''
       exec sudo systemctl start blog-build.service
     '')
+    (pkgs.writeShellScriptBin "blog-preview" ''
+      exec ${pkgs.hugo}/bin/hugo server -D -s ${src} --bind ${tnip} --baseURL "http://${tnip}:1313/"
+    '')
   ];
 
   systemd.tmpfiles.rules = [

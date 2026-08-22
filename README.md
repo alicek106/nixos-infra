@@ -60,6 +60,5 @@ diskutil eject /dev/diskN
 ## Writing
 
 - `http://editor.alicek106.net` - `new-post "글 제목" dev` (or `essay`)
-- Preview: `hugo server -D --bind 0.0.0.0 --baseURL http://0.0.0.0:1313/`
-- `blog-publish` → 공개 반영.
+- `blog-preview` / `blog-publish`
 - `/var/www/blog`: build output, `/var/lib/blog`: sources
