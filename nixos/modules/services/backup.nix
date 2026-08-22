@@ -144,4 +144,19 @@ lib.mkMerge [
       tar -czpf "$tmp/backup.tar.gz" --numeric-owner -C /var/lib/tailscale .
     '';
   })
+
+  (mkS3BackupPair {
+    name = "blog";
+    mainUnit = "blog-build.service";
+    stateDir = "/var/lib/blog";
+    sentinel = "/var/lib/blog/hugo.toml";
+    s3key = "blog/blog-source.tar.gz";
+    extractFlags = "-xzp";
+    user = null;
+    backupBuild = ''
+      tar -czp -f "$tmp/backup.tar.gz" \
+        --exclude=./public --exclude=./resources --exclude=./.hugo_build.lock --exclude=./.git \
+        -C /var/lib/blog .
+    '';
+  })
 ]

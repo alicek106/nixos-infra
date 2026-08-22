@@ -46,6 +46,7 @@
         extra_records = [
           { name = "diary.alicek106.net"; type = "A"; value = config.homelab.tailnetIP; }
           { name = "gitea.alicek106.net"; type = "A"; value = config.homelab.tailnetIP; }
+          { name = "editor.alicek106.net"; type = "A"; value = config.homelab.tailnetIP; } # temp
         ];
       };
       # TODO: 나중에 STUN, 릴레이에 쓰이는 서버는 별도로 구축한다.

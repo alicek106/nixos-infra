@@ -7,6 +7,10 @@
 
   programs.bat.enable = true;
 
+  programs.tmux = {
+    enable = true;
+  };
+
   home.packages = with pkgs; [
     ripgrep
     fd

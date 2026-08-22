@@ -10,6 +10,7 @@
     ./modules/services/backup.nix
     ./modules/services/ddns.nix
     ./modules/services/slack-alert.nix
+    ./modules/services/blog.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
