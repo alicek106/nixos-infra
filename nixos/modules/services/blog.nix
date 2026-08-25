@@ -1,25 +1,18 @@
 { config, pkgs, ... }:
 let
-  domain = "blog.alicek106.com"; # PoC
   src = "/var/lib/blog";
   webroot = "/var/www/blog";
   tnip = config.homelab.tailnetIP;
 in
 {
-  security.acme.certs.${domain} = {
-    dnsProvider = "route53";
-    environmentFile = config.age.secrets.nixos-credential.path;
-    group = "nginx";
-  };
-
   services.nginx = {
     recommendedGzipSettings = true;
     recommendedOptimisation = true;
     recommendedTlsSettings = true;
 
-    virtualHosts.${domain} = {
-      useACMEHost = domain;
-      forceSSL = true;
+    virtualHosts.blog = {
+      listen = [{ addr = "127.0.0.1"; port = 8080; }];
+      default = true; # domain 이름은 blog로 잡혀 있지만, 들어오는 트래픽은 siori.dev로 들어온다. 이 때, 매칭이 안되면 default=true로 설정된 virtualhost로 간다.
       root = "${webroot}/current";
       extraConfig = ''
         server_tokens off;
@@ -63,6 +56,20 @@ in
 
   systemd.services.code-server.serviceConfig.EnvironmentFile =
     config.age.secrets.aliced-env.path;
+
+  systemd.services.cloudflared-blog = {
+    description = "Cloudflare Tunnel for the blog";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" "nginx.service" ];
+    wants = [ "network-online.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.cloudflared}/bin/cloudflared tunnel --no-autoupdate run";
+      EnvironmentFile = config.age.secrets.cloudflared-token.path;
+      Restart = "on-failure";
+      RestartSec = "5s";
+      DynamicUser = true; # 아웃바운드 전용 → 권한 불필요
+    };
+  };
 
   systemd.services.blog-build = {
     description = "Build Hugo blog and atomically swap the served release";

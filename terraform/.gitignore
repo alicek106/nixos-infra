@@ -1,0 +1,10 @@
+# state 에는 Tunnel 토큰 등 시크릿이 들어감 → 절대 커밋 금지 (S3 백엔드 사용)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl.bak
+
+# 실제 값/시크릿
+terraform.tfvars
+*.auto.tfvars
+crash.log
