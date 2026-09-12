@@ -23,7 +23,7 @@ nixos-server/                      # repo root
 │   ├── hardware-configuration.nix       # auto-generated (do not edit)
 │   ├── disk-config.nix                  # disko disk partitioning
 │   └── home/                            # home-manager user env (shell/tools/git/neovim/claude-code)
-│                                        #   shared: nixos-desktop imports this same home/alicek106.nix
+│                                        #   shared: nixos-desktop imports the same home/profile.nix (as user "desktop")
 ├── nixos-desktop/                 # the desktop system config (flake output: .#nixos-desktop)
 │   ├── configuration.nix
 │   ├── hardware-configuration.nix       # auto-generated (do not edit)

@@ -26,7 +26,8 @@ diskutil eject /dev/diskN
 - `nixos-desktop` (`nixos-desktop/`) — 집 데스크탑(AMD Ryzen 5 2400G). 아직 서비스 없음, 기본 사용자 환경만.
 
 두 host 모두 같은 flake(`flake.nix`)의 `nixosConfigurations.<host>`로 관리되고,
-같은 home-manager 사용자 설정(`nixos-server/home/alicek106.nix`)을 공유한다.
+같은 home-manager 사용자 프로필(`nixos-server/home/profile.nix`)을 공유한다.
+(서버는 유저 `alicek106`, 데스크탑은 유저 `desktop`으로 각각 인스턴스화됨.)
 
 ## 서버 재설치 (nixos-server)
 
@@ -81,7 +82,7 @@ sudo nixos-install --flake .#nixos-desktop
 
 재부팅 후 새로 생성된 `hardware-configuration.nix`를 리포에도 반영(커밋)해야 다음 rebuild가 재현 가능하다:
 ```bash
-git clone https://github.com/alicek106/nixos-server.git /home/alicek106/nixos-server
+git clone https://github.com/alicek106/nixos-server.git /home/desktop/nixos-server
 # /mnt에서 복사했던 hardware-configuration.nix를 이 리포의 nixos-desktop/에 덮어쓰고 commit & push
 ```
 

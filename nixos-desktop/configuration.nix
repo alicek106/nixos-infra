@@ -28,7 +28,7 @@
   nixpkgs.config.allowUnfree = true;
   zramSwap.enable = true;
 
-  users.users.alicek106 = {
+  users.users.desktop = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     shell = pkgs.zsh;
@@ -60,7 +60,7 @@
   programs.git = {
     enable = true;
     config = {
-      safe.directory = [ "/home/alicek106/nixos-server" ];
+      safe.directory = [ "/home/desktop/nixos-server" ];
     };
   };
 }

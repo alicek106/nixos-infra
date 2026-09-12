@@ -23,7 +23,7 @@ these "non-reproducible smells" are present:
 - Where packages go: system-wide / services / root → `configuration.nix`; personal user env → `home/*.nix`
 - Version channels: default is 26.05 (`pkgs.foo`), newer versions via `pkgs.unstable.foo` (flake.nix `channelsOverlay`).
   Pin a specific old version via a named input + `channelsOverlay` (no inline import of a commit hash).
-- Keep modules small and single-purpose (like `home/shell.nix`, `home/git.nix`); wire them into `home/alicek106.nix`'s `imports`.
+- Keep modules small and single-purpose (like `home/shell.nix`, `home/git.nix`); wire them into `home/profile.nix`'s `imports`.
 - **Simplicity**: written so a nix beginner can follow it. Avoid unnecessary abstraction/complexity.
 - Put shell/lua etc. in separate files (`home/statusline.sh`, `home/nvim/*.lua`) and wrap them with nix.
 

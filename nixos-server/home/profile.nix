@@ -1,3 +1,4 @@
+{ username, homeDirectory }:
 { ... }:
 {
   imports = [
@@ -8,7 +9,7 @@
     ./neovim.nix
   ];
 
-  home.username = "alicek106";
-  home.homeDirectory = "/home/alicek106";
+  home.username = username;
+  home.homeDirectory = homeDirectory;
   home.stateVersion = "26.05";
 }
