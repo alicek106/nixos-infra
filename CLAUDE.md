@@ -1,39 +1,50 @@
 # NixOS Server Configuration — alicek106
 
-## Server specs
-- CPU: Intel (KVM supported)
-- Disk: NVMe (`/dev/nvme0n1`)
-- Partitions: GPT + btrfs (zstd compression, subvolumes: root/nix/home/var)
-- Boot: systemd-boot + EFI
+## Hosts
+
+Two machines, both managed from this one repo/flake:
+
+- **`nixos-server`** — the home server. Intel CPU (KVM). Disk: NVMe (`/dev/nvme0n1`). Runs the public
+  services (headscale/gitea/blog/backup/...).
+- **`nixos-desktop`** — a repurposed desktop. AMD Ryzen 5 2400G. Disk: SATA SSD (`/dev/sda`). No
+  services yet, just the base system + shared home-manager user env.
+
+Both: GPT + btrfs (zstd compression, subvolumes: root/nix/home/var), systemd-boot + EFI.
 
 ## Nix layout
 
 ```
-nixos-server/
-├── flake.nix              # entry point (nixpkgs 26.05 + disko + home-manager)
-│                          #   outputs: nixosConfigurations.nixos-alicek106 (server) / .installer (ISO)
+nixos-server/                      # repo root
+├── flake.nix                      # entry point (nixpkgs 26.05 + disko + home-manager)
+│                                  #   outputs: nixosConfigurations.nixos-server / .nixos-desktop / .installer (ISO)
 ├── flake.lock
-├── nixos/                 # the actual server system config (flake output: .#nixos-alicek106)
-│   ├── configuration.nix        # top-level system config
-│   ├── hardware-configuration.nix  # auto-generated (do not edit)
-│   ├── disk-config.nix          # disko disk partitioning
-│   └── home/                    # home-manager user env (shell/tools/git/neovim/claude-code)
-└── installer/             # custom ISO for headless remote install (flake output: .#installer)
-    └── installer.nix            # installer with sshd + macbook key baked in
+├── nixos-server/                  # the server system config (flake output: .#nixos-server)
+│   ├── configuration.nix                # top-level system config
+│   ├── hardware-configuration.nix       # auto-generated (do not edit)
+│   ├── disk-config.nix                  # disko disk partitioning
+│   └── home/                            # home-manager user env (shell/tools/git/neovim/claude-code)
+│                                        #   shared: nixos-desktop imports this same home/alicek106.nix
+├── nixos-desktop/                 # the desktop system config (flake output: .#nixos-desktop)
+│   ├── configuration.nix
+│   ├── hardware-configuration.nix       # auto-generated (do not edit)
+│   └── disk-config.nix
+└── installer/                     # custom ISO for headless remote install (flake output: .#installer)
+    └── installer.nix                    # installer with sshd + macbook key baked in
 ```
 
 ## Key commands
 
 ### Apply configuration
 ```bash
-# rebuild from the flake in the current directory
-sudo nixos-rebuild switch --flake /home/alicek106/nixos-server#nixos-alicek106
+# rebuild from the flake in the current directory (run this ON the host being rebuilt;
+# use #nixos-server or #nixos-desktop to match the machine you're on)
+sudo nixos-rebuild switch --flake /home/alicek106/nixos-server#nixos-server
 
 # test before applying (apply temporarily, no reboot needed)
-sudo nixos-rebuild test --flake /home/alicek106/nixos-server#nixos-alicek106
+sudo nixos-rebuild test --flake /home/alicek106/nixos-server#nixos-server
 
 # dry-run (preview the changes)
-sudo nixos-rebuild dry-activate --flake /home/alicek106/nixos-server#nixos-alicek106
+sudo nixos-rebuild dry-activate --flake /home/alicek106/nixos-server#nixos-server
 ```
 
 ### Search packages and options
@@ -117,7 +128,7 @@ networking.firewall.allowedTCPPorts = [ 22 80 443 ];
 
 While working, the `nix-change-review` skill (reproducibility/convention/documentation checklist) is
 auto-referenced, and there are hooks for auto-formatting after `.nix` edits (nixpkgs-fmt) and for
-reproducibility-smell detection on stop (declared in `nixos/home/claude-code.nix`).
+reproducibility-smell detection on stop (declared in `nixos-server/home/claude-code.nix`).
 
 ## Working & communication principles (mandatory)
 - **Assume the user can also be wrong**: do not uncritically accept the user's opinions, claims, or

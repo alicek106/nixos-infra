@@ -23,7 +23,7 @@ in
 {
   programs.claude-code = {
     enable = true;
-    package = pkgs.claude-code;
+    package = pkgs.unstable.claude-code;
 
     mcpServers = {
       nixos = {
@@ -68,9 +68,9 @@ in
       };
 
       theme = "dark";
-      model = "opus";
+      model = "sonnet";
       effortLevel = "high";
-      advisorModel = "opus";
+      advisorModel = "sonnet";
 
       skipAutoPermissionPrompt = true;
       skipDangerousModePermissionPrompt = true;
@@ -78,8 +78,8 @@ in
 
       env = {
         DISABLE_AUTOUPDATER = "1";
-        ANTHROPIC_DEFAULT_OPUS_MODEL = "claude-opus-4-8[1m]";
-        CLAUDE_CODE_SUBAGENT_MODEL = "claude-sonnet-4-6";
+        ANTHROPIC_DEFAULT_SONNET_MODEL = "claude-sonnet-5";
+        CLAUDE_CODE_SUBAGENT_MODEL = "claude-sonnet-5";
         CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = "50";
         ENABLE_PROMPT_CACHING_1H = "1";
         BASH_MAX_OUTPUT_LENGTH = "10000";
