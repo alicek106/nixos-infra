@@ -39,6 +39,9 @@ sudo headscale users list
 sudo headscale users create alicek106
 sudo headscale preauthkeys create --user 1 --reusable --expiration 24h
 sudo headscale nodes set-ip 2 100.64.0.2 # 특정 node의 IP 재고정
+
+# 새 서버를 등록할 일이 있다면
+sudo tailscale up --login-server https://headscale.alicek106.com --authkey <key> --hostname <hostname>
 ```
 
 ### 백업 / DDNS (타이머로 자동, 수동 실행도 가능)
