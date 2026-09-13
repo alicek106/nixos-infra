@@ -52,7 +52,7 @@
             home-manager.useUserPackages = true;
             # home directory (e.g. ~/.claude/settings.json) 에 파일이 이미 있으면 백업하고 작업한다.
             home-manager.backupFileExtension = "hm-bak";
-            home-manager.users.alicek106 = import ./nixos-server/home/profile.nix {
+            home-manager.users.alicek106 = import ./common/home/profile.nix {
               username = "alicek106";
               homeDirectory = "/home/alicek106";
             };
@@ -73,7 +73,7 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "hm-bak";
             # 서버와 동일한 사용자 환경(zsh/git/nvim/claude-code)을 재사용한다. (유저 이름/홈 디렉터리만 다름)
-            home-manager.users.desktop = import ./nixos-server/home/profile.nix {
+            home-manager.users.desktop = import ./common/home/profile.nix {
               username = "desktop";
               homeDirectory = "/home/desktop";
             };
