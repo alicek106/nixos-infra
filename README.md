@@ -18,18 +18,23 @@ sudo dd if=result/iso/*.iso of=/dev/rdiskN bs=4m status=progress
 diskutil eject /dev/diskN
 ```
 
-참고: USB 부팅은 root로 접속해야 함
+참고: USB 부팅은 root로 접속해야 함. installation USB에 SSH public 키 박혀있음
 
-## 호스트 두 대
+## unstable nixpkgs 업데이트
 
-- `nixos-server` (`nixos-server/`) — 홈서버 본체. headscale/gitea/블로그 등 공개 서비스.
-- `nixos-desktop` (`nixos-desktop/`) — 집 데스크탑(AMD Ryzen 5 2400G). 아직 서비스 없음, 기본 사용자 환경만.
+```bash
+nix flake update nixpkgs-unstabl
+sudo nixos-rebuild switch --flake .#<target>
+```
 
-두 host 모두 같은 flake(`flake.nix`)의 `nixosConfigurations.<host>`로 관리되고,
-같은 home-manager 사용자 프로필(`nixos-server/home/profile.nix`)을 공유한다.
-(서버는 유저 `alicek106`, 데스크탑은 유저 `desktop`으로 각각 인스턴스화됨.)
+## tailscale nodes
 
-## 서버 재설치 (nixos-server)
+- `nixos-server` (`nixos-server/`)
+- `nixos-desktop` (`nixos-desktop/`)
+- m4-mackbook
+- devsisters-linux (빨콩 노트북)
+
+## 서버 재설치 (nixos-server 기준)
 
 1. `git clone https://github.com/alicek106/nixos-infra.git /tmp/nixos-infra && cd /tmp/nixos-infra`
 2. 디스크 파티션 및 nixos 설치
@@ -66,8 +71,11 @@ diskutil eject /dev/diskN
 
 - claude code login
 
-## Writing
+## 새 서버를 설치할 때
 
-- `http://editor.alicek106.net` - `new-post "글 제목" dev` (or `essay`)
-- `blog-preview` / `blog-publish`
-- `/var/www/blog`: build output, `/var/lib/blog`: sources
+USB 부팅 후, disko로 디스크 포맷하고 난 뒤:
+
+```bash
+nixos-generate-config --no-filesystems --root /mnt
+ls /mnt/etc/nixos/hardware-configuration.nix
+```
