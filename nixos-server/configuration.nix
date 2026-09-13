@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, tailscaleIPs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -6,11 +6,11 @@
     ./modules/services/aliced.nix
     ./modules/services/gitea.nix
     ./modules/services/headscale.nix
-    ./modules/services/tailscale.nix
     ./modules/services/backup.nix
     ./modules/services/ddns.nix
     ./modules/services/slack-alert.nix
     ./modules/services/blog.nix
+    (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-server; })
   ];
 
   boot.loader.systemd-boot.enable = true;

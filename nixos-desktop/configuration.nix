@@ -1,7 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, tailscaleIPs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
+    (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
   ];
 
   boot.loader.systemd-boot.enable = true;

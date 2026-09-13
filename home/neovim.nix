@@ -7,7 +7,7 @@
     vimAlias = true;
 
     # neovim 이 직접 호출하는 바이너리를 wrapper에 직접 bundling
-    extraPackages = with pkgs; [ nixd fzf ripgrep ];
+    extraPackages = with pkgs; [ nixd fzf ripgrep nixpkgs-fmt ];
 
     plugins = with pkgs.vimPlugins; [
       nerdtree
@@ -101,6 +101,22 @@
       set undodir=~/.vim/undodir
       set undofile
       set mouse=
+
+      " === 저장 시 nix 파일 자동 포맷 (nixpkgs-fmt) ===
+      function! FormatNix()
+        let l:view = winsaveview()
+        silent %!nixpkgs-fmt
+        if v:shell_error != 0
+          undo
+          echohl ErrorMsg | echom "nixpkgs-fmt failed, changes reverted" | echohl None
+        endif
+        call winrestview(l:view)
+      endfunction
+
+      augroup NixFormat
+        autocmd!
+        autocmd BufWritePre *.nix call FormatNix()
+      augroup END
     '';
   };
 
