@@ -79,3 +79,7 @@ USB 부팅 후, disko로 디스크 포맷하고 난 뒤:
 nixos-generate-config --no-filesystems --root /mnt
 ls /mnt/etc/nixos/hardware-configuration.nix
 ```
+
+## TODO
+
+- DERP/STUN 서버 자체 운영
