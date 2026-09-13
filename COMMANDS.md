@@ -12,14 +12,14 @@ sudo nixos-rebuild switch --rollback                     # 직전 설정으로 �
 
 ### agenix
 
-`nixos/secrets/*.age` 를 참고. 수신자는 public key + 서버 설치 시 설정된 host key이다.
+`secrets/*.age` 를 참고 (두 호스트가 공유하는 저장소). 수신자는 public key + 각 host key이다.
 
 ```bash
-cd nixos/secrets
+cd secrets
 sudo EDITOR=vim agenix -e nixos-credential.age -i /etc/ssh/ssh_host_ed25519_key
 ```
 
-- **수신자(키) 변경 후 전체 재암호화**: `cd nixos/secrets && sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key`
+- **수신자(키) 변경 후 전체 재암호화**: `cd secrets && sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key`
 - ⚠️ **시크릿 내용만 바꾸면 컨테이너는 자동 재시작 안 됨** — 반영하려면 아래 컨테이너 재시작 필요.
   (`.nix` 파일이 바뀌면 rebuild 가 알아서 재시작하지만, `.age` 내용 변경은 유닛 정의가 그대로라 감지 못 함)
 

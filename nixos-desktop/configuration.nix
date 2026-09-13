@@ -2,7 +2,8 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./secrets.nix
+    ../modules/shared-secrets.nix
+    ../modules/slack-alert.nix
     ./modules/services/backup.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
   ];

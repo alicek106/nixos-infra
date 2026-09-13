@@ -13,21 +13,37 @@ Both: GPT + btrfs (zstd compression, subvolumes: root/nix/home/var), systemd-boo
 
 ## Nix layout
 
+Top level = "shared vs. per-host". Anything both machines use lives at repo root
+(`home/`, `modules/`, `secrets/`); anything specific to one machine lives under its own
+`nixos-server/` or `nixos-desktop/` directory.
+
 ```
-nixos-server/                      # repo root
+<repo root>                        # github: alicek106/nixos-infra
 ├── flake.nix                      # entry point (nixpkgs 26.05 + disko + home-manager)
 │                                  #   outputs: nixosConfigurations.nixos-server / .nixos-desktop / .installer (ISO)
+│                                  #   tailscaleIPs map lives here, passed down via specialArgs
 ├── flake.lock
-├── nixos-server/                  # the server system config (flake output: .#nixos-server)
-│   ├── configuration.nix                # top-level system config
+├── home/                          # shared home-manager profile (shell/tools/git/neovim/claude-code)
+│   └── profile.nix                      # parameterized: { username, homeDirectory } → module
+├── modules/                       # shared NixOS-level modules (both hosts import these)
+│   ├── tailscale-client.nix             # { hostIP } → module; enables tailscale client
+│   ├── mk-s3-backup-pair.nix            # { bucket, cred } → factory for S3 backup/restore unit pairs
+│   └── shared-secrets.nix               # declares the agenix secrets both hosts need (nixos-credential)
+├── secrets/                       # shared agenix store (both hosts are recipients)
+│   ├── secrets.nix                      # agenix recipient list (do not read/edit via Claude)
+│   └── *.age
+├── nixos-server/                  # the server-only config (flake output: .#nixos-server)
+│   ├── configuration.nix                # networking.hostName = "nixos-alicek106" (legacy name, kept)
 │   ├── hardware-configuration.nix       # auto-generated (do not edit)
 │   ├── disk-config.nix                  # disko disk partitioning
-│   └── home/                            # home-manager user env (shell/tools/git/neovim/claude-code)
-│                                        #   shared: nixos-desktop imports the same home/profile.nix (as user "desktop")
-├── nixos-desktop/                 # the desktop system config (flake output: .#nixos-desktop)
+│   ├── secrets.nix                      # server-only secrets (aliced-env/slack-webhook/cloudflared-token)
+│   └── modules/services/                # server-only services (headscale/gitea/blog/backup/...)
+├── nixos-desktop/                 # the desktop-only config (flake output: .#nixos-desktop)
 │   ├── configuration.nix
 │   ├── hardware-configuration.nix       # auto-generated (do not edit)
-│   └── disk-config.nix
+│   ├── disk-config.nix
+│   └── modules/services/backup.nix       # desktop-only: tailscale state → S3
+├── apply                          # ./apply [target] — detects host by tailscale0 IP, runs nixos-rebuild switch
 └── installer/                     # custom ISO for headless remote install (flake output: .#installer)
     └── installer.nix                    # installer with sshd + macbook key baked in
 ```

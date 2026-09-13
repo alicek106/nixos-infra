@@ -1,5 +1,3 @@
-# tailscale 클라이언트 상태만 S3에 백업한다 (재설치 시 headscale에 재등록 안 해도 되게).
-# mkS3BackupPair 팩토리는 nixos-server 와 공유 (../../../modules/mk-s3-backup-pair.nix).
 { config, pkgs, lib, ... }:
 let
   mkS3BackupPair =

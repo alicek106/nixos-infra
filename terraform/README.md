@@ -45,9 +45,9 @@ nix shell nixpkgs#opentofu -c tofu apply
 nix shell nixpkgs#opentofu -c tofu output -raw tunnel_token
 
 # 2) 서버에서 agenix 로 저장
-#    먼저 nixos/secrets/secrets.nix 수신자 목록에 아래 줄 추가:
+#    먼저 secrets/secrets.nix 수신자 목록에 아래 줄 추가:
 #      "cloudflared-token.age".publicKeys = [ alice server ];
-cd ../nixos/secrets
+cd ../secrets
 sudo EDITOR=vim agenix -e cloudflared-token.age -i /etc/ssh/ssh_host_ed25519_key
 #    에디터에 한 줄:  TUNNEL_TOKEN=<위 토큰 값>
 

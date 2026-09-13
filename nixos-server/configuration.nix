@@ -3,12 +3,13 @@
   imports = [
     ./hardware-configuration.nix
     ./secrets.nix
+    ../modules/shared-secrets.nix
     ./modules/services/aliced.nix
     ./modules/services/gitea.nix
     ./modules/services/headscale.nix
     ./modules/services/backup.nix
     ./modules/services/ddns.nix
-    ./modules/services/slack-alert.nix
+    ../modules/slack-alert.nix
     ./modules/services/blog.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-alicek106; })
   ];
