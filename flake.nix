@@ -35,9 +35,9 @@
 
       tailscaleIPs = {
         alicek106-m4 = "100.64.0.1"; # not used here, not nix managed
-        nixos-alicek106 = "100.64.0.2"; # N100 server
+        nixos-alicek106 = "100.64.0.2"; # N100 server, nixos-server
         devsisters-linux = "100.64.0.3"; # not used, not nix managed
-        nixos-desktop = "100.64.0.4"; # desktop server. proxmox
+        nixos-desktop = "100.64.0.4"; # desktop server, proxmos
       };
     in
     {

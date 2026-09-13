@@ -10,7 +10,7 @@
     ./modules/services/ddns.nix
     ./modules/services/slack-alert.nix
     ./modules/services/blog.nix
-    (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-server; })
+    (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-alicek106; })
   ];
 
   boot.loader.systemd-boot.enable = true;
