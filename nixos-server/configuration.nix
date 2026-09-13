@@ -3,7 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ./secrets.nix
-    ../modules/shared-secrets.nix
+    (import ../modules/shared-secrets.nix { username = "alicek106"; })
     ./modules/services/aliced.nix
     ./modules/services/gitea.nix
     ./modules/services/headscale.nix

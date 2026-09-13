@@ -2,7 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../modules/shared-secrets.nix
+    (import ../modules/shared-secrets.nix { username = "desktop"; })
     ../modules/slack-alert.nix
     ./modules/services/backup.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
