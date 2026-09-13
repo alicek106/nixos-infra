@@ -2,6 +2,8 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./secrets.nix
+    ./modules/services/backup.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
   ];
 

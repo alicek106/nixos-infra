@@ -71,9 +71,12 @@
         specialArgs = { inherit tailscaleIPs; };
         modules = [
           disko.nixosModules.disko
+          agenix.nixosModules.default
           ./nixos-desktop/disk-config.nix
           ./nixos-desktop/configuration.nix
           { nixpkgs.overlays = [ channelsOverlay ]; }
+          # agenix CLI (시크릿 편집: agenix -e)
+          { environment.systemPackages = [ agenix.packages.${system}.default ]; }
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
