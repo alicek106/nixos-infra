@@ -41,4 +41,33 @@
       }
     '';
   };
+
+  # DHCP server for the VMs. Each VM always gets the same IP, reserved by its MAC.
+  # MAC rule: 52:54:00:64:00:<last octet of the IP, in hex>.
+  services.dnsmasq = {
+    enable = true;
+    # DHCP only. Don't point the host's own /etc/resolv.conf at dnsmasq.
+    resolveLocalQueries = false;
+    settings = {
+      port = 0; # disable the DNS server part of dnsmasq
+      interface = "br-vm";
+      bind-interfaces = true; # never answer on enp7s0 (the home LAN already has a DHCP server)
+
+      # "static": hand out addresses only to the MACs listed in dhcp-host below.
+      dhcp-range = "10.100.0.0,static,255.255.255.0,12h";
+      dhcp-host = [
+        "52:54:00:64:00:0a,10.100.0.10,win-game"
+        "52:54:00:64:00:14,10.100.0.20,win-bank"
+      ];
+      dhcp-option = [
+        "option:router,10.100.0.1" # default gateway = the host
+        "option:dns-server,192.168.0.1" # home router. dnsmasq's own DNS is off (port = 0)
+      ];
+      # We are the only DHCP server on br-vm, so answer renewals right away even after a restart.
+      dhcp-authoritative = true;
+    };
+  };
+
+  # Allow DHCP requests (UDP 67) from the VMs, only on br-vm.
+  networking.firewall.interfaces.br-vm.allowedUDPPorts = [ 67 ];
 }
