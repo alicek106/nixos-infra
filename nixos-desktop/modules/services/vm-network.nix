@@ -70,4 +70,11 @@
 
   # Allow DHCP requests (UDP 67) from the VMs, only on br-vm.
   networking.firewall.interfaces.br-vm.allowedUDPPorts = [ 67 ];
+
+  # Announce the VM subnet to the tailnet, so other tailnet devices (e.g. the laptop)
+  # can reach 10.100.0.0/24 through this host. headscale auto-approves this route
+  # (see nixos-server/modules/services/headscale.nix), so no manual approval step.
+  # extraSetFlags (not extraUpFlags) because this node authenticates manually, without
+  # an authKeyFile; `tailscale set` applies regardless of how the node was authenticated.
+  services.tailscale.extraSetFlags = [ "--advertise-routes=10.100.0.0/24" ];
 }

@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   # --- TLS: Let's Encrypt DNS-01 via Route53 ---
   security.acme = {
@@ -58,6 +58,32 @@
       database = {
         type = "sqlite";
         sqlite.path = "/var/lib/headscale/db.sqlite";
+      };
+      # ACL policy. Without this block, headscale allows all traffic between nodes by
+      # default anyway, so the "accept everything" rule below only keeps that same
+      # behaviour. autoApprovers is the actual reason this file exists: it lets
+      # nixos-desktop self-announce the 10.100.0.0/24 VM subnet without a manual
+      # `headscale nodes approve-routes` each time.
+      policy = {
+        mode = "file";
+        path = toString (
+          pkgs.writeText "headscale-acl.json" (
+            builtins.toJSON {
+              acls = [
+                {
+                  action = "accept";
+                  src = [ "*" ];
+                  dst = [ "*:*" ];
+                }
+              ];
+              autoApprovers = {
+                routes = {
+                  "10.100.0.0/24" = [ "alicek106" ];
+                };
+              };
+            }
+          )
+        );
       };
     };
   };
