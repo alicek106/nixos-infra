@@ -5,6 +5,7 @@
     (import ../modules/shared-secrets.nix { username = "desktop"; })
     ../modules/slack-alert.nix
     ./modules/services/backup.nix
+    ./modules/services/vm-network.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
   ];
 
