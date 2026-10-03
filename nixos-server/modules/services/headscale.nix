@@ -77,8 +77,10 @@
                 }
               ];
               autoApprovers = {
+                # headscale's v2 policy syntax requires a trailing "@" on usernames
+                # (to tell them apart from tags/groups), even without an email domain.
                 routes = {
-                  "10.100.0.0/24" = [ "alicek106" ];
+                  "10.100.0.0/24" = [ "alicek106@" ];
                 };
               };
             }
