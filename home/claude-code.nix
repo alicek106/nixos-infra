@@ -68,9 +68,9 @@ in
       };
 
       theme = "dark";
-      model = "sonnet";
+      model = "opus";
       effortLevel = "high";
-      advisorModel = "sonnet";
+      advisorModel = "fable";
 
       skipAutoPermissionPrompt = true;
       skipDangerousModePermissionPrompt = true;
@@ -78,6 +78,7 @@ in
 
       env = {
         DISABLE_AUTOUPDATER = "1";
+        ANTHROPIC_DEFAULT_OPUS_MODEL = "claude-opus-5-5";
         ANTHROPIC_DEFAULT_SONNET_MODEL = "claude-sonnet-5";
         CLAUDE_CODE_SUBAGENT_MODEL = "claude-sonnet-5";
         CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = "50";
