@@ -7,6 +7,7 @@
     ./modules/services/backup.nix
     ./modules/services/vm-network.nix
     ./modules/services/libvirt.nix
+    ./modules/services/vms.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
   ];
 

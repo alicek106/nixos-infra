@@ -1,0 +1,38 @@
+# Registers the VMs with libvirt from the domain XML files in nixos-desktop/vms/.
+# Defining a VM only registers it; it does not start it (no autostart, see VM_PLAN.md).
+{ config, pkgs, ... }:
+let
+  # Fill in nix store paths that can't be written into the XML file directly.
+  # replaceVars fails the build if any @placeholder@ is left unreplaced.
+  winBankXml = pkgs.replaceVars ../../vms/win-bank.xml {
+    # pkgs.virtio-win is the unpacked driver directory (the build result).
+    # Its .src attribute is the raw input it was built from: the original virtio-win.iso,
+    # downloaded with a pinned hash. The VM needs an ISO to attach as a CD, so use .src.
+    virtioWinIso = "${pkgs.virtio-win.src}";
+  };
+in
+{
+  systemd.services.libvirt-define-vms = {
+    description = "Define libvirt VMs from the repo's domain XML";
+    requires = [ "libvirtd.service" ];
+    after = [ "libvirtd.service" ];
+    wantedBy = [ "multi-user.target" ];
+    path = [ config.virtualisation.libvirtd.package pkgs.coreutils ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    # Re-runs on `nixos-rebuild switch` whenever the XML changes (its store path is in this script).
+    script = ''
+      # Create the disk image only if it doesn't exist yet. truncate makes a sparse file:
+      # 64G apparent size, but it uses no space until Windows writes to it.
+      # It inherits nodatacow (+C) from /var/lib/libvirt/images.
+      img=/var/lib/libvirt/images/win-bank.raw
+      if [ ! -e "$img" ]; then
+        truncate -s 64G "$img"
+      fi
+
+      virsh --connect qemu:///system define ${winBankXml}
+    '';
+  };
+}

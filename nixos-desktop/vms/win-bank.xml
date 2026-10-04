@@ -1,0 +1,127 @@
+<!--
+  win-bank: Windows 11 VM for internet banking only. No GPU passthrough.
+  See nixos-desktop/VM_PLAN.md.
+  The virtio driver ISO path below is a placeholder (name wrapped in "@"). nix replaces it
+  with the real /nix/store path at build time (nixos-desktop/modules/services/vms.nix).
+-->
+<domain type='kvm'>
+  <name>win-bank</name>
+  <memory unit='GiB'>4</memory>
+  <vcpu placement='static'>2</vcpu>
+
+  <!-- UEFI with Secure Boot support (Windows 11 requirement). libvirt picks the firmware
+       from QEMU's firmware descriptors. No Microsoft keys are enrolled in that firmware,
+       so Secure Boot is supported but not enforced. -->
+  <os firmware='efi'>
+    <type arch='x86_64' machine='q35'>hvm</type>
+    <firmware>
+      <feature enabled='yes' name='secure-boot'/>
+      <feature enabled='no' name='enrolled-keys'/>
+    </firmware>
+    <loader secure='yes'/>
+  </os>
+
+  <features>
+    <acpi/>
+    <apic/>
+    <!-- Secure Boot firmware requires SMM (System Management Mode). -->
+    <smm state='on'/>
+    <!-- Hyper-V enlightenments: Windows notices it runs on a hypervisor and uses faster
+         paths for timers, interrupts and spinlocks. -->
+    <hyperv mode='custom'>
+      <relaxed state='on'/>
+      <vapic state='on'/>
+      <spinlocks state='on' retries='8191'/>
+      <vpindex state='on'/>
+      <synic state='on'/>
+      <stimer state='on'/>
+      <frequencies state='on'/>
+    </hyperv>
+  </features>
+
+  <!-- Expose the real host CPU model (best performance). -->
+  <cpu mode='host-passthrough' check='none' migratable='off'>
+    <topology sockets='1' dies='1' cores='2' threads='1'/>
+  </cpu>
+
+  <!-- Windows keeps the hardware clock in local time, not UTC. -->
+  <clock offset='localtime'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+    <timer name='hypervclock' present='yes'/>
+  </clock>
+
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+
+  <devices>
+    <!-- System disk: sparse raw image on the nodatacow vm-images subvolume.
+         virtio-blk is paravirtualized: Windows needs the viostor driver (virtio ISO) to see it.
+         discard='unmap' passes TRIM through, so freed space is released from the sparse file. -->
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source file='/var/lib/libvirt/images/win-bank.raw'/>
+      <target dev='vda' bus='virtio'/>
+      <boot order='1'/>
+    </disk>
+
+    <!-- Windows installer. Booted only while the disk is still empty (boot order 2). -->
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='/var/lib/libvirt/iso/win11.iso'/>
+      <target dev='sda' bus='sata'/>
+      <readonly/>
+      <boot order='2'/>
+    </disk>
+
+    <!-- virtio drivers for Windows (disk, network, display, guest agent). -->
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='@virtioWinIso@'/>
+      <target dev='sdb' bus='sata'/>
+      <readonly/>
+    </disk>
+
+    <!-- Plugged into our own bridge br-vm. The MAC is reserved in dnsmasq -> 10.100.0.20.
+         isolated='yes': bridge port isolation, so isolated ports (the VMs) can't talk to
+         each other, only to the host (br-vm). Comment out the <port> line to allow it. -->
+    <interface type='bridge'>
+      <source bridge='br-vm'/>
+      <mac address='52:54:00:64:00:14'/>
+      <model type='virtio'/>
+      <port isolated='yes'/>
+    </interface>
+
+    <!-- Emulated TPM 2.0 via swtpm (Windows 11 requirement). -->
+    <tpm model='tpm-crb'>
+      <backend type='emulator' version='2.0'/>
+    </tpm>
+
+    <!-- Screen: SPICE listening on the host's localhost only.
+         Reach it from the laptop through an SSH tunnel. -->
+    <graphics type='spice' autoport='yes'>
+      <listen type='address' address='127.0.0.1'/>
+    </graphics>
+    <video>
+      <model type='virtio' heads='1' primary='yes'/>
+    </video>
+    <!-- Absolute pointer, so the mouse doesn't drift in the SPICE window. -->
+    <input type='tablet' bus='usb'/>
+
+    <!-- SPICE agent (clipboard, auto resize) and QEMU guest agent channels. -->
+    <channel type='spicevmc'>
+      <target type='virtio' name='com.redhat.spice.0'/>
+    </channel>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+    </channel>
+
+    <memballoon model='virtio'/>
+  </devices>
+</domain>
