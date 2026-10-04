@@ -93,15 +93,9 @@
       <boot order='1'/>
     </disk>
 
-    <!-- INSTALL ONLY: Windows installer ISO. The disk is empty at first, so the VM boots
-         from here. Remove after installation (G4): a missing ISO file stops the VM from starting. -->
-    <disk type='file' device='cdrom'>
-      <driver name='qemu' type='raw'/>
-      <source file='/var/lib/libvirt/iso/win11.iso'/>
-      <target dev='sda' bus='sata'/>
-      <readonly/>
-      <boot order='2'/>
-    </disk>
+    <!-- The Windows installer ISO was attached here during installation. It was removed
+         afterwards: a missing ISO file would stop the VM from starting.
+         To reinstall, add a cdrom with /var/lib/libvirt/iso/win11.iso and <boot order='2'/>. -->
 
     <!-- virtio drivers for Windows. Kept attached: it lives in the nix store. -->
     <disk type='file' device='cdrom'>
