@@ -20,9 +20,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Minecraft server packages (vanilla/Fabric/Paper, all versions) + a NixOS module
+    # that manages mods and config files declaratively. Used by nixos-desktop only.
+    nix-minecraft = {
+      url = "github:Infinidoge/nix-minecraft";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, disko, home-manager, agenix }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, disko, home-manager, agenix, nix-minecraft }:
     let
       system = "x86_64-linux";
 
@@ -75,6 +82,9 @@
           ./nixos-desktop/disk-config.nix
           ./nixos-desktop/configuration.nix
           { nixpkgs.overlays = [ channelsOverlay ]; }
+          # services.minecraft-servers module + pkgs.fabricServers.* packages
+          nix-minecraft.nixosModules.minecraft-servers
+          { nixpkgs.overlays = [ nix-minecraft.overlay ]; }
           # agenix CLI (시크릿 편집: agenix -e)
           { environment.systemPackages = [ agenix.packages.${system}.default ]; }
           home-manager.nixosModules.home-manager
