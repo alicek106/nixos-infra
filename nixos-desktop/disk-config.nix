@@ -37,8 +37,11 @@
                 mountpoint = "/var";
                 mountOptions = [ "compress=zstd" "noatime" ];
               };
-              # VM disk images. A separate top-level subvolume, so snapshots of /var
-              # don't include them and they can be snapshotted on their own (for backup).
+              # VM disk images in their own subvolume. Being a subvolume (not a plain
+              # directory) keeps them out of snapshots of /var, and lets them be
+              # snapshotted on their own (for backup).
+              # It sits at the top level next to root/nix/home/var ("flat layout"), so each
+              # subvolume can be snapshotted, deleted or replaced without touching the others.
               # Copy-on-write is turned off for this directory below (tmpfiles "+C").
               "/vm-images" = {
                 mountpoint = "/var/lib/libvirt/images";
