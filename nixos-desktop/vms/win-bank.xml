@@ -6,6 +6,11 @@
 -->
 <domain type='kvm'>
   <name>win-bank</name>
+  <!-- Fixed UUID. Without it, libvirt generates a new random UUID on every `virsh define`,
+       and refuses to redefine an existing VM name with a different UUID.
+       The emulated TPM state is stored under /var/lib/libvirt/swtpm/<uuid>/, so this
+       UUID must not change once Windows is installed. -->
+  <uuid>7c511a73-6d6e-40f9-ab3f-25e176a797db</uuid>
   <memory unit='GiB'>4</memory>
   <vcpu placement='static'>2</vcpu>
 
