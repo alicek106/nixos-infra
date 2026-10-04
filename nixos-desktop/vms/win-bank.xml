@@ -71,16 +71,12 @@
       <boot order='1'/>
     </disk>
 
-    <!-- Windows installer. Booted only while the disk is still empty (boot order 2). -->
-    <disk type='file' device='cdrom'>
-      <driver name='qemu' type='raw'/>
-      <source file='/var/lib/libvirt/iso/win11.iso'/>
-      <target dev='sda' bus='sata'/>
-      <readonly/>
-      <boot order='2'/>
-    </disk>
+    <!-- The Windows installer ISO was attached here during installation. It was removed
+         afterwards: a missing ISO file would stop the VM from starting.
+         To reinstall, add a cdrom with /var/lib/libvirt/iso/win11.iso and <boot order='2'/>. -->
 
-    <!-- virtio drivers for Windows (disk, network, display, guest agent). -->
+    <!-- virtio drivers for Windows (disk, network, display, guest agent).
+         Kept attached: it lives in the nix store, so it never goes missing. -->
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
       <source file='@virtioWinIso@'/>
