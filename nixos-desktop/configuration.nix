@@ -9,6 +9,7 @@
     ./modules/services/libvirt.nix
     ./modules/services/vms.nix
     ./modules/services/vfio.nix
+    ./modules/services/minecraft.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
   ];
 
