@@ -10,6 +10,13 @@ let
     # downloaded with a pinned hash. The VM needs an ISO to attach as a CD, so use .src.
     virtioWinIso = "${pkgs.virtio-win.src}";
   };
+
+  winGameXml = pkgs.replaceVars ../../vms/win-game.xml {
+    virtioWinIso = "${pkgs.virtio-win.src}";
+    # UEFI firmware with Secure Boot. The .ms VARS template has the Microsoft keys enrolled.
+    ovmfCode = "${pkgs.OVMFFull.fd}/FV/OVMF_CODE.fd";
+    ovmfVarsMs = "${pkgs.OVMFFull.fd}/FV/OVMF_VARS.ms.fd";
+  };
 in
 {
   systemd.services.libvirt-define-vms = {
@@ -24,15 +31,19 @@ in
     };
     # Re-runs on `nixos-rebuild switch` whenever the XML changes (its store path is in this script).
     script = ''
-      # Create the disk image only if it doesn't exist yet. truncate makes a sparse file:
-      # 64G apparent size, but it uses no space until Windows writes to it.
+      # Create a disk image only if it doesn't exist yet. truncate makes a sparse file:
+      # full apparent size, but it uses no space until Windows writes to it.
       # It inherits nodatacow (+C) from /var/lib/libvirt/images.
-      img=/var/lib/libvirt/images/win-bank.raw
-      if [ ! -e "$img" ]; then
-        truncate -s 64G "$img"
-      fi
+      make_disk() {
+        if [ ! -e "$1" ]; then
+          truncate -s "$2" "$1"
+        fi
+      }
+      make_disk /var/lib/libvirt/images/win-bank.raw 64G
+      make_disk /var/lib/libvirt/images/win-game.raw 100G
 
       virsh --connect qemu:///system define ${winBankXml}
+      virsh --connect qemu:///system define ${winGameXml}
     '';
   };
 }
