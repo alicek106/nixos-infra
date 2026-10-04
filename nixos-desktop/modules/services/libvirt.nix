@@ -25,5 +25,11 @@
   };
 
   # Lets the desktop user run `virsh` against qemu:///system without sudo.
+  # (Group changes apply only after logging in again.)
   users.users.desktop.extraGroups = [ "libvirtd" ];
+
+  # A plain `virsh` run by a normal user connects to qemu:///session, a separate per-user
+  # libvirt with its own (empty) VM list. Our VMs live in qemu:///system, so make that
+  # the default and skip typing `-c qemu:///system` every time.
+  environment.sessionVariables.LIBVIRT_DEFAULT_URI = "qemu:///system";
 }
