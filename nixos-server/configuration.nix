@@ -11,8 +11,11 @@
     ./modules/services/ddns.nix
     ../modules/slack-alert.nix
     ./modules/services/blog.nix
+    ./modules/services/devsisters-ir-monitor.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-alicek106; })
   ];
+
+  virtualisation.docker.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -63,6 +66,11 @@
     vim
     jq
     awscli2
+    tcpdump
+    traceroute
+    iproute2
+    python3
+    containerlab
   ];
 
   system.stateVersion = "26.05";
