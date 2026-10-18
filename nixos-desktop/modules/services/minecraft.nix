@@ -12,7 +12,8 @@
 { pkgs, tailscaleIPs, ... }:
 let
   # Server-side mods, pinned by hash (versions for MC 26.3 from Modrinth).
-  # Left out on purpose: C2ME and ScalableLux (alpha builds, risk of broken world generation).
+  # Left out on purpose: C2ME and ScalableLux (alpha builds, risk of broken world generation),
+  # and Chunky (see below).
   mods = {
     fabric-api = pkgs.fetchurl {
       url = "https://cdn.modrinth.com/data/P7dR8mSH/versions/bNnaTiuM/fabric-api-0.161.0%2B26.3.jar";
@@ -44,12 +45,10 @@ let
       url = "https://cdn.modrinth.com/data/swbUV1cr/versions/bbzcTCOs/bluemap-5.28-fabric.jar";
       sha512 = "21978808ee083f6abe06ba23fd0ff6c0e07fcfa7260f3e1cff959a517836e3e71a08a43574a3711ec37456bd6ad9fc1ebaabb736b590ee53f0d79f01637f8b26";
     };
-    # Pre-generates chunks ahead of time, so exploring doesn't lag (/chunky commands).
-    chunky = pkgs.fetchurl {
-      url = "https://cdn.modrinth.com/data/fALzjamp/versions/4Eotm6ov/Chunky-Fabric-1.5.3.jar";
-      sha512 = "b83bfe7b218d0aa6232af977ae741dc1f82b10e50cd12bb759f65cf416b8b62beccb543e587ef0b9670abe03815660f8e091bc6823624d65cf07300571573516";
-    };
   };
+  # Chunky (chunk pre-generation) is left out too: Chunky 1.5.3 together with DH 3.3.4 hangs
+  # the server on first start ("Selecting global world spawn..." forever, no chunk workers).
+  # Each of them alone starts fine. Tested 2026-10-04 on MC 26.3.
 in
 {
   services.minecraft-servers = {
@@ -113,7 +112,7 @@ in
         sync-chunk-writes = false;
         # lz4 instead of deflate for region files: less CPU. btrfs zstd compresses the disk anyway.
         region-file-compression = "lz4";
-        # Keep ticking when nobody is online, so chunk pre-generation (Chunky) keeps running.
+        # Keep ticking when nobody is online, so background world/LOD generation keeps running.
         pause-when-empty-seconds = -1;
       };
 

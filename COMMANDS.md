@@ -8,6 +8,32 @@ sudo nixos-rebuild dry-activate --flake .#nixos-alicek106  # 변경 프리뷰
 sudo nixos-rebuild test   --flake .#nixos-alicek106      # 재부팅 없이 임시 적용
 sudo nixos-rebuild switch --flake .#nixos-alicek106      # 실제 적용, boot generation 생성
 sudo nixos-rebuild switch --rollback                     # 직전 설정으로 롤백
+
+# unstable flake update
+nix flake lock --update-input nixpkgs-unstable
+```
+
+### nix evaluate
+
+```bash
+# 특정 설정 drv 값을 evaluate
+nix eval --raw '.#nixosConfigurations.nixos-desktop.config.system.build.toplevel.drvPath'
+
+# 특정 값의 최종 형태를 출력한다. nix modules를 통해 이것저것 합쳐진 형태이므로 내가 안넣은것도 보일 수 있음.
+nix eval '.#nixosConfigurations.nixos-desktop.config.networking.hostName'
+nix eval --json '.#nixosConfigurations.nixos-desktop.config.networking.firewall.trustedInterfaces'
+
+# 참고: 옵션 이름에 dot이 있으면 아래처럼 quote로 감싸면 됨.
+nix eval '.#nixosConfigurations.nixos-desktop.config.boot.kernel.sysctl."net.ipv4.ip_forward"'
+
+# nix가 생성하는 특정 파일 하나만 내용 확인
+cat "$(nix build --no-link --print-out-paths '.#nixosConfigurations.nixos-desktop.config.services.dnsmasq.configFile')"
+
+# interactive nix shell
+nix repl
+#   nix-repl> :lf .
+#   nix-repl> nixosConfigurations.nixos-desktop.config.services.dnsmasq.settings
+#   nix-repl> :q
 ```
 
 ### agenix
