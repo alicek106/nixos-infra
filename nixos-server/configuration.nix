@@ -11,7 +11,6 @@
     ./modules/services/ddns.nix
     ../modules/slack-alert.nix
     ./modules/services/blog.nix
-    ./modules/services/devsisters-ir-monitor.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-alicek106; })
   ];
 
