@@ -9,4 +9,6 @@ in
   "nixos-credential.age".publicKeys = all;
   "slack-webhook.age".publicKeys = all;
   "cloudflared-token.age".publicKeys = all;
+  "demo-env.age".publicKeys = all;
+  "demo-deploy-key.age".publicKeys = all;
 }
