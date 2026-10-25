@@ -7,7 +7,8 @@
 - `CLOUDFLARE_API_TOKEN` (enpass 참고)
   - Account -> Cloudflare Tunnel -> Edit
   - Zone -> DNS -> Edit
-  - Zone -> Zone -> Read (target DNS에 대해 설정, siori.dev 등)
+  - Zone -> Zone WAF -> Edit (siori.dev, demo 국가 차단 룰)
+  - Zone -> Zone -> Read
 - terraform.tfvars: `cloudflare_account_id`, `cloudflare_zone_id`
 
 ## 실행

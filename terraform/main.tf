@@ -46,6 +46,21 @@ resource "cloudflare_zone_dnssec" "siori" {
   status  = "active"
 }
 
+resource "cloudflare_ruleset" "siori_geo" {
+  zone_id = var.cloudflare_zone_id
+  name    = "siori geo restriction"
+  kind    = "zone"
+  phase   = "http_request_firewall_custom"
+  rules = [
+    {
+      description = "Block non-KR traffic to blog (verified bots allowed)"
+      expression  = "(http.host eq \"${var.blog_hostname}\" and ip.src.country ne \"KR\" and not cf.client.bot)"
+      action      = "block"
+      enabled     = true
+    },
+  ]
+}
+
 data "cloudflare_zero_trust_tunnel_cloudflared_token" "blog" {
   account_id = var.cloudflare_account_id
   tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.blog.id
