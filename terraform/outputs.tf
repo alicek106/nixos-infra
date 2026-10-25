@@ -18,3 +18,8 @@ output "dnssec_ds" {
   value       = cloudflare_zone_dnssec.siori.ds
   description = "레지스트라에 등록해야 하는 DS 레코드"
 }
+
+output "demo_name_servers" {
+  value       = cloudflare_zone.demo.name_servers
+  description = "가비아 네임서버 설정에 등록할 CF 네임서버"
+}

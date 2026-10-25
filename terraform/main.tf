@@ -20,6 +20,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
         service  = var.origin_service
       },
       {
+        hostname = var.demo_hostname
+        service  = var.demo_origin_service
+      },
+      {
         // 지정된 호스트네임 외에는 404
         service = "http_status:404"
       },
@@ -34,11 +38,12 @@ resource "cloudflare_dns_record" "blog" {
   type    = "CNAME"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.blog.id}.cfargotunnel.com"
   proxied = true
-  ttl     = 1 # proxied 일 때는 자동(1)
+  ttl     = 1
 }
 
 resource "cloudflare_zone_dnssec" "siori" {
   zone_id = var.cloudflare_zone_id
+  status  = "active"
 }
 
 data "cloudflare_zero_trust_tunnel_cloudflared_token" "blog" {

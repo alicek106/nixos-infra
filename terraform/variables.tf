@@ -20,6 +20,19 @@ variable "origin_service" {
   description = "cloudflared 가 프록시할 로컬 nginx (블로그)"
 }
 
+variable "demo_zone_name" {
+  type = string
+}
+
+variable "demo_hostname" {
+  type = string
+}
+
+variable "demo_origin_service" {
+  type    = string
+  default = "http://127.0.0.1:8081"
+}
+
 variable "tunnel_name" {
   type        = string
   default     = "siori-blog"
