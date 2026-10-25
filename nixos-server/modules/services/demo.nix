@@ -1,5 +1,4 @@
 { config, pkgs, ... }:
-# 레포 주소(DEMO_REPO_URL)와 deploy key 는 agenix 시크릿이다 (nixos-server/secrets.nix).
 let
   src = "/var/lib/demo/repo";
   webroot = "/var/www/demo";
