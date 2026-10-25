@@ -11,4 +11,5 @@ in
   "cloudflared-token.age".publicKeys = all;
   "demo-env.age".publicKeys = all;
   "demo-deploy-key.age".publicKeys = all;
+  "slack-deploy-env.age".publicKeys = all;
 }
