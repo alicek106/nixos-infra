@@ -24,6 +24,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
         service  = var.demo_origin_service
       },
       {
+        hostname = var.demo_zone_name
+        service  = var.demo_origin_service
+      },
+      {
         // 지정된 호스트네임 외에는 404
         service = "http_status:404"
       },
