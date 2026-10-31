@@ -10,5 +10,10 @@
       owner = "demo";
     };
     slack-deploy-env.file = ../secrets/slack-deploy-env.age;
+    # Same file as slack-webhook (modules/shared-secrets.nix), readable by the builds publish CGI.
+    slack-webhook-ios-build = {
+      file = ../secrets/slack-webhook.age;
+      owner = "ios-build-publish";
+    };
   };
 }

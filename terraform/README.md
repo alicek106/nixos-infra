@@ -1,3 +1,5 @@
+디렉터리는 terraform이지만 tofu를 쓰시오. 디렉터리 명은 그냥 습관에 따라 지었음.
+
 # Cloudflare Tunnel
 
 대외 공개용 서비스를 우회 서빙하기 위한 Cloudflare Tunnel
@@ -31,6 +33,9 @@ cd ../secrets
 sudo EDITOR=vim agenix -e cloudflared-token.age -i /etc/ssh/ssh_host_ed25519_key
 # TUNNEL_TOKEN=...
 ```
+
+## Route53
+- builds.alicek106.com: jenkins + fastlane ios remote build CI용.
 
 ## 참고
 

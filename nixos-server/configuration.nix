@@ -13,6 +13,7 @@
     ./modules/services/blog.nix
     ./modules/services/demo.nix
     ./modules/services/slack-deploy.nix
+    ./modules/services/builds.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-alicek106; })
   ];
 
