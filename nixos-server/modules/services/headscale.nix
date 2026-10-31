@@ -59,11 +59,9 @@
         type = "sqlite";
         sqlite.path = "/var/lib/headscale/db.sqlite";
       };
-      # ACL policy. Without this block, headscale allows all traffic between nodes by
-      # default anyway, so the "accept everything" rule below only keeps that same
-      # behaviour. autoApprovers is the actual reason this file exists: it lets
-      # nixos-desktop self-announce the 10.100.0.0/24 VM subnet without a manual
-      # `headscale nodes approve-routes` each time.
+      # 기본적으로 headscale은 이런 설정이 없어도 노드간 통신은 모두 allow하므로 이 코드는 사실 필요가 없지만
+      # nixos-desktop이 10.100.0.0/24 (VM subnet, 브릿지에 묶인 CIDR) 을 모든 tailnet node에게 자동으로 라우팅을 전파하려면
+      # 이 설정이 필요하다.
       policy = {
         mode = "file";
         path = toString (
