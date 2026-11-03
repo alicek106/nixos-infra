@@ -70,6 +70,10 @@ sudo nixos-rebuild switch --flake .#<target>
 ## 수동 설정이 필요한 항목
 
 - claude code login
+- VM까지 restic으로 백업하진 않으므로, VM 생성 및 설치는 직접 해야 함.
+  - 다행히도 virtio (IO 드라이버 반가상화) 는 nix에 있어서 그걸 자동으로 마운트하긴 하지만,
+  - windows 설치 화면에서는 드라이버 로드 -> virtio CD -> viostor/w11/amd64 및 NetKVM/w11/amd64 정도는 손으로 직접 선택해줄 것.
+  - 그 후엔 VM 내부에서 virtio 내부의 virtio-win-guest-tools.exe 같은거 실행하면 알아서 됨.
 
 ## 새 서버를 설치할 때
 
