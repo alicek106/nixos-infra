@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, tailscaleIPs, ... }:
 {
   # --- TLS: Let's Encrypt DNS-01 via Route53 ---
   security.acme = {
@@ -46,6 +46,7 @@
         extra_records = [
           { name = "diary.alicek106.net"; type = "A"; value = config.homelab.tailnetIP; }
           { name = "gitea.alicek106.net"; type = "A"; value = config.homelab.tailnetIP; }
+          { name = "jenkins.alicek106.net"; type = "A"; value = tailscaleIPs.nixos-desktop; }
           { name = "editor.alicek106.net"; type = "A"; value = config.homelab.tailnetIP; } # temp
         ];
       };

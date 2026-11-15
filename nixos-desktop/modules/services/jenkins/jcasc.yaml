@@ -3,6 +3,9 @@ jenkins:
   mode: NORMAL
   slaveAgentPort: -1
   markupFormatter: plainText
+unclassified:
+  location:
+    url: "http://jenkins.alicek106.net/"
 security:
   apiToken:
     creationOfLegacyTokenEnabled: false

@@ -2,6 +2,7 @@
 let
   namespace = "jenkins";
   jenkinsHome = "/var/lib/jenkins";
+  clusterIP = "10.43.0.80";
   plugins = lib.filter (line: line != "") (lib.splitString "\n" (builtins.readFile ./plugins.txt));
   adminPassword = config.age.secrets.jenkins-admin-password;
   matchPassword = config.age.secrets.ios-build-match-password;
@@ -16,8 +17,7 @@ in
   # jenkins가 실행되는 uid, gid로 hostpath mount 디렉터리를 바꿔서 파일 rw가 가능하도록 만들어야 함
   systemd.tmpfiles.rules = [ "d ${jenkinsHome} 0750 1000 1000 -" ];
 
-  # jenkins secret 값 주입 (agenix -> k8s 시크릿 생성)
-  # 호스트 부팅, k3s 재시작 시, agenix 파일 변경 시 이 service를 실행
+  # agenix 값을 k8s 시크릿으로 만드는 설정
   systemd.services.jenkins-k8s-secrets = {
     description = "Create the Jenkins Kubernetes Secrets from agenix";
     after = [ "k3s.service" ];
@@ -60,6 +60,7 @@ in
 
     values = {
       controller = {
+        inherit clusterIP;
         image.pullPolicy = "IfNotPresent";
         resources = {
           requests = {
@@ -97,6 +98,20 @@ in
       };
       agent.enabled = false;
       persistence.existingClaim = "jenkins-home";
+    };
+  };
+
+  services.nginx = {
+    enable = true;
+    recommendedProxySettings = true;
+    virtualHosts."jenkins.alicek106.net" = {
+      # tailnet 대역에서만 접근 가능
+      listen = [{ addr = config.homelab.tailnetIP; port = 80; }];
+      locations."/" = {
+        proxyPass = "http://${clusterIP}:8080";
+        # jenkins worker는 웹소켓으로 접근하므로 true로 설정
+        proxyWebsockets = true;
+      };
     };
   };
 
