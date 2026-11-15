@@ -80,7 +80,7 @@
                 routes = {
                   "10.100.0.0/24" = [ "alicek106@" ];
                 };
-                autoApprovers.exitNode = [ "alicek106@" ];
+                exitNode = [ "alicek106@" ];
               };
             }
           )
