@@ -10,6 +10,7 @@
     ./modules/services/vms.nix
     ./modules/services/vfio.nix
     ./modules/services/minecraft.nix
+    ./modules/services/k3s.nix
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
   ];
 
