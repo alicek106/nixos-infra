@@ -17,6 +17,10 @@
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-alicek106; })
   ];
 
+  # ipv4 forward 활성화 및 이 노드를 exit node로 등록
+  services.tailscale.useRoutingFeatures = "server";
+  services.tailscale.extraSetFlags = [ "--advertise-exit-node" ];
+
   virtualisation.docker.enable = true;
 
   boot.loader.systemd-boot.enable = true;

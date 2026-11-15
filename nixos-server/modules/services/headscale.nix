@@ -75,11 +75,11 @@
                 }
               ];
               autoApprovers = {
-                # headscale's v2 policy syntax requires a trailing "@" on usernames
-                # (to tell them apart from tags/groups), even without an email domain.
+                # alicek106 user에 대한 노드들은 exitNode, VM subnet route 자동 승인
                 routes = {
                   "10.100.0.0/24" = [ "alicek106@" ];
                 };
+                autoApprovers.exitNode = [ "alicek106@" ];
               };
             }
           )
