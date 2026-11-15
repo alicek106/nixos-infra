@@ -13,4 +13,5 @@ in
   "demo-deploy-key.age".publicKeys = all;
   "slack-deploy-env.age".publicKeys = all;
   "ios-build-match-password.age".publicKeys = [ alice desktop ];
+  "jenkins-admin-password.age".publicKeys = [ alice desktop ];
 }

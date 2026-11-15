@@ -1,0 +1,19 @@
+jenkins:
+  numExecutors: 0
+  mode: NORMAL
+  slaveAgentPort: -1
+  markupFormatter: plainText
+security:
+  apiToken:
+    creationOfLegacyTokenEnabled: false
+    tokenGenerationOnCreationEnabled: false
+    usageStatisticsEnabled: true
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: match-password
+              description: fastlane match MATCH_PASSWORD
+              secret: "${jenkins-credentials-match-password}"

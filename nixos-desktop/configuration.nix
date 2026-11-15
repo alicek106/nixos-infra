@@ -11,6 +11,7 @@
     ./modules/services/vfio.nix
     ./modules/services/minecraft.nix
     ./modules/services/k3s.nix
+    ./modules/services/jenkins
     (import ../modules/tailscale-client.nix { hostIP = tailscaleIPs.nixos-desktop; })
   ];
 
