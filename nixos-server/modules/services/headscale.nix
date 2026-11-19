@@ -23,6 +23,8 @@
     virtualHosts."headscale.alicek106.com" = {
       useACMEHost = "headscale.alicek106.com";
       forceSSL = true;
+      # nginx 취약점때문에 비활성화
+      http2 = false;
       locations."/" = {
         proxyPass = "http://127.0.0.1:8085";
         proxyWebsockets = true; # headscale long-poll (Upgrade/Connection 헤더)

@@ -28,6 +28,7 @@ Top level = "shared vs. per-host". Anything both machines use lives at repo root
 ├── modules/                       # shared NixOS-level modules (both hosts import these)
 │   ├── tailscale-client.nix             # { hostIP } → module; enables tailscale client
 │   ├── mk-s3-backup-pair.nix            # { bucket, cred } → factory for S3 backup/restore unit pairs
+│   ├── block-sctp.nix                   # blocks the sctp kernel module (nginx2root privesc mitigation)
 │   └── shared-secrets.nix               # declares the agenix secrets both hosts need (nixos-credential)
 ├── secrets/                       # shared agenix store (both hosts are recipients)
 │   ├── secrets.nix                      # agenix recipient list (do not read/edit via Claude)

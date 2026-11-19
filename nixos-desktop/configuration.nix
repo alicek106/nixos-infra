@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     (import ../modules/shared-secrets.nix { username = "desktop"; })
     ../modules/slack-alert.nix
+    ../modules/block-sctp.nix
     ./modules/services/backup.nix
     ./modules/services/vm-network.nix
     ./modules/services/libvirt.nix

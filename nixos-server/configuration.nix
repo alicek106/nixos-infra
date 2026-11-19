@@ -10,6 +10,7 @@
     ./modules/services/backup.nix
     ./modules/services/ddns.nix
     ../modules/slack-alert.nix
+    ../modules/block-sctp.nix
     ./modules/services/blog.nix
     ./modules/services/demo.nix
     ./modules/services/slack-deploy.nix

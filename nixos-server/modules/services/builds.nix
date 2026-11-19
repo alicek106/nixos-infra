@@ -62,6 +62,8 @@ in
     listen = [{ addr = config.homelab.tailnetIP; port = 443; ssl = true; }];
     onlySSL = true;
     useACMEHost = host;
+    # nginx 취약점때문에 비활성화
+    http2 = false;
     root = webroot;
     locations."= /".return = "302 /current/";
     locations."/current/".extraConfig = staticFiles;
