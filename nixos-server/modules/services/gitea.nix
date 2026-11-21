@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, tailscaleIPs, ... }:
 {
   virtualisation.oci-containers.containers.gitea = {
     image = "docker.io/gitea/gitea:1.24.7@sha256:918955f16b1e91732af6c449bb2db3a34271748dbed1ccfbae48f8a2fb5480b8";
@@ -14,6 +14,7 @@
     };
 
     ports = [ "${config.homelab.tailnetIP}:3000:3000" ];
+    extraOptions = [ "--add-host=jenkins.alicek106.net:${tailscaleIPs.nixos-desktop}" ];
   };
 
   services.nginx.virtualHosts."gitea.alicek106.net" = {
