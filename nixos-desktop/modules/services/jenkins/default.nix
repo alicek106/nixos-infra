@@ -6,12 +6,16 @@ let
   plugins = lib.filter (line: line != "") (lib.splitString "\n" (builtins.readFile ./plugins.txt));
   adminPassword = config.age.secrets.jenkins-admin-password;
   matchPassword = config.age.secrets.ios-build-match-password;
+  webhookToken = config.age.secrets.jenkins-gitea-webhook-token;
+  # modules/shared-secrets.nix, SLACK_WEBHOOK_URL=... env file
+  slackWebhook = config.age.secrets.slack-webhook;
 in
 {
   age.secrets = {
     # /run/agenix/<file name>에 해당 암호화된 age 파일을 복호화해서 위치하게 만든다.
     jenkins-admin-password.file = ../../../../secrets/jenkins-admin-password.age;
     ios-build-match-password.file = ../../../../secrets/ios-build-match-password.age;
+    jenkins-gitea-webhook-token.file = ../../../../secrets/jenkins-gitea-webhook-token.age;
   };
 
   # jenkins가 실행되는 uid, gid로 hostpath mount 디렉터리를 바꿔서 파일 rw가 가능하도록 만들어야 함
@@ -27,6 +31,8 @@ in
     restartTriggers = [
       adminPassword.file
       matchPassword.file
+      webhookToken.file
+      slackWebhook.file
     ];
     path = [ config.services.k3s.package ];
     serviceConfig = {
@@ -46,6 +52,8 @@ in
         --dry-run=client -o yaml | apply
       k3s kubectl -n ${namespace} create secret generic jenkins-credentials \
         --from-file=match-password=${matchPassword.path} \
+        --from-file=gitea-webhook-token=${webhookToken.path} \
+        --from-file=slack-webhook-url=<(sed -n 's/^SLACK_WEBHOOK_URL=//p' ${slackWebhook.path}) \
         --dry-run=client -o yaml | apply
     '';
   };
@@ -82,6 +90,14 @@ in
           {
             name = "jenkins-credentials";
             keyName = "match-password";
+          }
+          {
+            name = "jenkins-credentials";
+            keyName = "gitea-webhook-token";
+          }
+          {
+            name = "jenkins-credentials";
+            keyName = "slack-webhook-url";
           }
         ];
         # jenkins agent는 websocket으로 접속하므로 agent listener는 불필요

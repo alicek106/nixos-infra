@@ -30,3 +30,61 @@ credentials:
               id: match-password
               description: fastlane match MATCH_PASSWORD
               secret: "${jenkins-credentials-match-password}"
+          - string:
+              scope: GLOBAL
+              id: gitea-webhook-token
+              description: Bearer token of the whatseat Gitea push webhook
+              secret: "${jenkins-credentials-gitea-webhook-token}"
+          - string:
+              scope: GLOBAL
+              id: slack-webhook-url
+              description: Slack incoming webhook URL for build failures
+              secret: "${jenkins-credentials-slack-webhook-url}"
+jobs:
+  - script: |
+      pipelineJob('kinnylog-ci') {
+        description('whatseat main push: verify, qa_debug, publish to builds.alicek106.com')
+        parameters {
+          stringParam('WHATSEAT_SHA', '', 'whatseat commit SHA (40 hex). The Gitea push webhook fills it from $.after.')
+        }
+        properties {
+          pipelineTriggers {
+            triggers {
+              genericTrigger {
+                genericVariables {
+                  genericVariable {
+                    key('WHATSEAT_SHA')
+                    value('$.after')
+                  }
+                  genericVariable {
+                    key('WHATSEAT_REF')
+                    value('$.ref')
+                  }
+                }
+                tokenCredentialId('gitea-webhook-token')
+                // Tag pushes and zero SHAs (ref deletion) do not build.
+                regexpFilterText('$WHATSEAT_REF $WHATSEAT_SHA')
+                regexpFilterExpression('^refs/heads/main (?!0{40})[0-9a-f]{40}$')
+                causeString('whatseat push $WHATSEAT_SHA')
+                printContributedVariables(false)
+                printPostContent(false)
+                silentResponse(false)
+              }
+            }
+          }
+        }
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('http://gitea.alicek106.net/alicek106/kinnylog-remote-build.git')
+                }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight(true)
+          }
+        }
+      }

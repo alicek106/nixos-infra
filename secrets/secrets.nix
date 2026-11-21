@@ -7,11 +7,18 @@ in
 {
   "aliced-env.age".publicKeys = all;
   "nixos-credential.age".publicKeys = all;
-  "slack-webhook.age".publicKeys = all;
   "cloudflared-token.age".publicKeys = all;
+
+  # common slack webhook
+  "slack-webhook.age".publicKeys = all;
+
+  # demo app deploy secrets
   "demo-env.age".publicKeys = all;
   "demo-deploy-key.age".publicKeys = all;
   "slack-deploy-env.age".publicKeys = all;
-  "ios-build-match-password.age".publicKeys = [ alice desktop ];
-  "jenkins-admin-password.age".publicKeys = [ alice desktop ];
+
+  ## jenkins secrets
+  "ios-build-match-password.age".publicKeys = [ alice desktop ]; # match password for fastlane
+  "jenkins-admin-password.age".publicKeys = [ alice desktop ]; # jenkins admin password
+  "jenkins-gitea-webhook-token.age".publicKeys = [ alice desktop ]; # gitea -> jenkins push webhook token
 }
