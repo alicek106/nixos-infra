@@ -3,6 +3,16 @@ jenkins:
   mode: NORMAL
   slaveAgentPort: -1
   markupFormatter: plainText
+  nodes:
+    - permanent:
+        name: mac-studio
+        remoteFS: /Users/alicek106/jenkins-agent
+        numExecutors: 1
+        labelString: "ios macos-arm64 xcode-27-0"
+        launcher:
+          inbound:
+            webSocket: true
+        retentionStrategy: always
 unclassified:
   location:
     url: "http://jenkins.alicek106.net/"
