@@ -21,4 +21,5 @@ in
   "ios-build-match-password.age".publicKeys = [ alice desktop ]; # match password for fastlane
   "jenkins-admin-password.age".publicKeys = [ alice desktop ]; # jenkins admin password
   "jenkins-gitea-webhook-token.age".publicKeys = [ alice desktop ]; # gitea -> jenkins push webhook token
+  "appstore-connect-api-key.age".publicKeys = [ alice desktop ]; # app store connect api key
 }

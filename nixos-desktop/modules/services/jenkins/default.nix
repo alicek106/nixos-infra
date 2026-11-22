@@ -7,6 +7,7 @@ let
   adminPassword = config.age.secrets.jenkins-admin-password;
   matchPassword = config.age.secrets.ios-build-match-password;
   webhookToken = config.age.secrets.jenkins-gitea-webhook-token;
+  ascApiKey = config.age.secrets.appstore-connect-api-key;
   # modules/shared-secrets.nix, SLACK_WEBHOOK_URL=... env file
   slackWebhook = config.age.secrets.slack-webhook;
 in
@@ -16,6 +17,7 @@ in
     jenkins-admin-password.file = ../../../../secrets/jenkins-admin-password.age;
     ios-build-match-password.file = ../../../../secrets/ios-build-match-password.age;
     jenkins-gitea-webhook-token.file = ../../../../secrets/jenkins-gitea-webhook-token.age;
+    appstore-connect-api-key.file = ../../../../secrets/appstore-connect-api-key.age;
   };
 
   # jenkins가 실행되는 uid, gid로 hostpath mount 디렉터리를 바꿔서 파일 rw가 가능하도록 만들어야 함
@@ -33,6 +35,7 @@ in
       matchPassword.file
       webhookToken.file
       slackWebhook.file
+      ascApiKey.file
     ];
     path = [ config.services.k3s.package ];
     serviceConfig = {
@@ -54,6 +57,7 @@ in
         --from-file=match-password=${matchPassword.path} \
         --from-file=gitea-webhook-token=${webhookToken.path} \
         --from-file=slack-webhook-url=<(sed -n 's/^SLACK_WEBHOOK_URL=//p' ${slackWebhook.path}) \
+        --from-file=appstore-connect-api-key=${ascApiKey.path} \
         --dry-run=client -o yaml | apply
     '';
   };
@@ -98,6 +102,10 @@ in
           {
             name = "jenkins-credentials";
             keyName = "slack-webhook-url";
+          }
+          {
+            name = "jenkins-credentials";
+            keyName = "appstore-connect-api-key";
           }
         ];
         # jenkins agent는 websocket으로 접속하므로 agent listener는 불필요

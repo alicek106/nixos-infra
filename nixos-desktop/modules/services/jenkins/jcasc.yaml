@@ -40,6 +40,11 @@ credentials:
               id: slack-webhook-url
               description: Slack incoming webhook URL for build failures
               secret: "${jenkins-credentials-slack-webhook-url}"
+          - string:
+              scope: GLOBAL
+              id: appstore-connect-api-key
+              description: App Store Connect API key (.p8 content) for build numbers and TestFlight uploads
+              secret: "${jenkins-credentials-appstore-connect-api-key}"
 jobs:
   - script: |
       pipelineJob('kinnylog-ci') {
