@@ -93,3 +93,23 @@ jobs:
           }
         }
       }
+      pipelineJob('kinnylog-candidate') {
+        description('Release candidate, started by hand: verify, next build number, Release archive, Ad Hoc install page, Mac Studio artifacts')
+        parameters {
+          stringParam('WHATSEAT_SHA', '', 'whatseat commit SHA (40 hex), usually one that passed kinnylog-ci')
+        }
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('http://gitea.alicek106.net/alicek106/kinnylog-remote-build.git')
+                }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile.candidate')
+            lightweight(true)
+          }
+        }
+      }
