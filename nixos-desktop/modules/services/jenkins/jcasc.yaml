@@ -113,3 +113,23 @@ jobs:
           }
         }
       }
+      pipelineJob('kinnylog-upload') {
+        description('App Store Connect upload, started by hand: App Store export of a stored candidate archive, upload, wait for processing')
+        parameters {
+          stringParam('CANDIDATE', '', 'stored candidate name <version>-<build>-<sha7>, e.g. 1.5-3-abc1234 (Mac Studio ~/ios-build/artifacts/candidate/)')
+        }
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('http://gitea.alicek106.net/alicek106/kinnylog-remote-build.git')
+                }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile.upload')
+            lightweight(true)
+          }
+        }
+      }
