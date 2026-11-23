@@ -83,7 +83,7 @@ jobs:
             scm {
               git {
                 remote {
-                  url('http://gitea.alicek106.net/alicek106/kinnylog-remote-build.git')
+                  url('http://gitea.alicek106.net/alicek106/ios-remote-build.git')
                 }
                 branch('*/main')
               }
@@ -103,7 +103,7 @@ jobs:
             scm {
               git {
                 remote {
-                  url('http://gitea.alicek106.net/alicek106/kinnylog-remote-build.git')
+                  url('http://gitea.alicek106.net/alicek106/ios-remote-build.git')
                 }
                 branch('*/main')
               }
@@ -123,7 +123,7 @@ jobs:
             scm {
               git {
                 remote {
-                  url('http://gitea.alicek106.net/alicek106/kinnylog-remote-build.git')
+                  url('http://gitea.alicek106.net/alicek106/ios-remote-build.git')
                 }
                 branch('*/main')
               }
