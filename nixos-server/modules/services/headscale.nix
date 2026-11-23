@@ -18,6 +18,8 @@
     virtualHosts."_" = {
       default = true;
       rejectSSL = true;
+      # catch all 라우팅은 0.0.0.0 말고도 tailnet ip도 listen하도록 만들어야 444가 정상적으로 내려감
+      listenAddresses = config.services.nginx.defaultListenAddresses ++ [ config.homelab.tailnetIP ];
       locations."/".return = "444"; # 평문 HTTP 는 연결만 끊음
     };
     virtualHosts."headscale.alicek106.com" = {
