@@ -65,14 +65,15 @@ in
     # nginx 취약점때문에 비활성화
     http2 = false;
     root = webroot;
-    locations."= /".return = "302 /current/";
-    locations."/current/".extraConfig = staticFiles;
-    locations."/releases/".extraConfig = staticFiles;
+    # /index.html (app list), /<app key>/index.html (builds of that app), /<app key>/current/, /<app key>/releases/<publish ID>/
+    locations."/".extraConfig = staticFiles;
+    # .incoming holds the publish lock and uploads in progress.
+    locations."~ /\\.".return = "404";
 
     # publish는 같은 tailnet에서만 호출할 수 있도록 nginx 레이어에서 미리 막아두기
     # 생각해보니 프로비저닝 프로파일을 어차피 아이폰에서 검증하므로 악성 액션은 불가능할 것 같긴 하지만
     # tailnet 노드중 하나가 침해되어 malicious한 파일을 upload를 하게 될 때도, cgi에서 슬랙으로 바로 알람을 보내니 어차피 감지할 수 있을듯.
-    locations."/publish/" = {
+    locations."^~ /publish/" = {
       fastcgiParams.SCRIPT_FILENAME = "${publish}/bin/ios-build-publish";
       extraConfig = ''
         allow 100.64.0.0/10;
@@ -81,12 +82,10 @@ in
         fastcgi_pass unix:${config.services.fcgiwrap.instances.builds.socket.address};
       '';
     };
-    locations."/".return = "404";
   };
 
   systemd.tmpfiles.rules = [
     "d ${webroot} 0755 ${user} ${user} -"
-    "d ${webroot}/releases 0755 ${user} ${user} -"
     "d ${webroot}/.incoming 0700 ${user} ${user} -"
   ];
 }
