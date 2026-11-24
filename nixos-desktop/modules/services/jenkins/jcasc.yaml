@@ -33,7 +33,7 @@ credentials:
           - string:
               scope: GLOBAL
               id: gitea-webhook-token
-              description: Bearer token of the whatseat Gitea push webhook
+              description: Bearer token of the app repos' Gitea push webhooks (ios-ci)
               secret: "${jenkins-credentials-gitea-webhook-token}"
           - string:
               scope: GLOBAL
@@ -47,10 +47,11 @@ credentials:
               secret: "${jenkins-credentials-appstore-connect-api-key}"
 jobs:
   - script: |
-      pipelineJob('kinnylog-ci') {
-        description('whatseat main push: verify, qa_debug, publish to builds.alicek106.com')
+      pipelineJob('ios-ci') {
+        description('main push of an app repo: verify, qa_debug, publish to builds.alicek106.com/<app key>/')
         parameters {
-          stringParam('WHATSEAT_SHA', '', 'whatseat commit SHA (40 hex). The Gitea push webhook fills it from $.after.')
+          stringParam('APP', '', 'app key = Gitea repo name, e.g. whatseat (ios-remote-build apps/<app key>.yml). The Gitea push webhook fills it from $.repository.name.')
+          stringParam('APP_SHA', '', 'app commit SHA (40 hex). The Gitea push webhook fills it from $.after.')
         }
         properties {
           pipelineTriggers {
@@ -58,19 +59,23 @@ jobs:
               genericTrigger {
                 genericVariables {
                   genericVariable {
-                    key('WHATSEAT_SHA')
+                    key('APP')
+                    value('$.repository.name')
+                  }
+                  genericVariable {
+                    key('APP_SHA')
                     value('$.after')
                   }
                   genericVariable {
-                    key('WHATSEAT_REF')
+                    key('APP_REF')
                     value('$.ref')
                   }
                 }
                 tokenCredentialId('gitea-webhook-token')
-                // Tag pushes and zero SHAs (ref deletion) do not build.
-                regexpFilterText('$WHATSEAT_REF $WHATSEAT_SHA')
-                regexpFilterExpression('^refs/heads/main (?!0{40})[0-9a-f]{40}$')
-                causeString('whatseat push $WHATSEAT_SHA')
+                // Only main pushes build; tag pushes, zero SHAs (ref deletion) and odd repo names do not.
+                regexpFilterText('$APP_REF $APP_SHA $APP')
+                regexpFilterExpression('^refs/heads/main (?!0{40})[0-9a-f]{40} [A-Za-z0-9][A-Za-z0-9._-]*$')
+                causeString('$APP push $APP_SHA')
                 printContributedVariables(false)
                 printPostContent(false)
                 silentResponse(false)
@@ -93,10 +98,11 @@ jobs:
           }
         }
       }
-      pipelineJob('kinnylog-candidate') {
-        description('Release candidate, started by hand: verify, next build number, Release archive, Ad Hoc install page, Mac Studio artifacts')
+      pipelineJob('ios-candidate') {
+        description('Release candidate, started by hand: verify, next build number, Release archive, Ad Hoc install page, Mac artifacts')
         parameters {
-          stringParam('WHATSEAT_SHA', '', 'whatseat commit SHA (40 hex), usually one that passed kinnylog-ci')
+          stringParam('APP', '', 'app key, e.g. whatseat (ios-remote-build apps/<app key>.yml)')
+          stringParam('APP_SHA', '', 'app commit SHA (40 hex), usually one that passed ios-ci')
         }
         definition {
           cpsScm {
@@ -113,10 +119,10 @@ jobs:
           }
         }
       }
-      pipelineJob('kinnylog-upload') {
+      pipelineJob('ios-upload') {
         description('App Store Connect upload, started by hand: App Store export of a stored candidate archive, upload, wait for processing')
         parameters {
-          stringParam('CANDIDATE', '', 'stored candidate name <version>-<build>-<sha7>, e.g. 1.5-3-abc1234 (Mac Studio ~/ios-build/artifacts/candidate/)')
+          stringParam('CANDIDATE', '', 'stored candidate name <app key>-<version>-<build>-<sha7>, e.g. whatseat-1.5-4-3d4e6e9 (Mac ~/ios-build/artifacts/<app key>/candidate/)')
         }
         definition {
           cpsScm {
